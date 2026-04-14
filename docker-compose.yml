@@ -1,0 +1,50 @@
+services:
+  pgvector:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: raguser
+      POSTGRES_PASSWORD: ragpass
+      POSTGRES_DB: ragdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./dbdocker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U raguser -d ragdb" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app # hot reload — le modifiche si riflettono subito
+      - /app/node_modules # evita che il volume sovrascriva i node_modules
+    depends_on:
+      pgvector:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://raguser:ragpass@pgvector:5432/ragdb
+      NODE_ENV: development
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app # hot reload
+      - /app/node_modules
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: development
+
+volumes:
+  pgdata:
