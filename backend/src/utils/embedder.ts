@@ -1,4 +1,5 @@
 import { openai } from "../config/openai.js";
+import "dotenv/config";
 
 //Funzione che crea un embedding di una stringa
 export async function getEmbedding(text: string): Promise<number[]> {
@@ -27,14 +28,30 @@ export async function getEmbedding(text: string): Promise<number[]> {
 
     */
 
-    //Embedding "pseudo-coerente"
-    const base = text.length;
+    //Utilizzo Ollama per creare un embedding dato una stringa
+    const res = await fetch("http://ollama:11434/api/embedding", {
 
-    return Array.from({ length: 10 }, (_, i) =>
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
 
-        Math.sin(base + i)
+            model: "nomic-embed-text",
+            prompt: text,
 
-    );
+        }),
+
+    });
+
+    //Controllo se c'è qualche errore nella risposta
+    if (!res.ok) throw new Error(`Ollama error: ${res.statusText}`);
+
+    //Rendo i dati restituiti in formato json
+    const data = await res.json();
+
+    //Controllo che ci sia un risultato
+    if (!data.embedding) throw new Error("Impossibile creare l'embedding: nessun risultato");
+
+    return data.embedding;
 
 }
 
