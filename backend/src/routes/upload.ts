@@ -3,6 +3,7 @@ import multer from "multer";
 import fs from "fs";
 import { chunkText } from "../utils/chunker.js"; //Ho scritto "import {chunkText}" tra parentesi graffe perché sto esportando con un nome preciso
 import { getEmbeddings } from "../utils/embedder.js";
+import { pool } from "../db.js";
 
 //Creo la mia route
 const router = Router();
@@ -31,6 +32,21 @@ router.post("/", upload.single("file"), async (req, res) => {
 
     //Salvo in una variabile gli embeddings creati dai testi chunkati
     const embeddedChunks = await getEmbeddings(chunks);
+
+    //Scorro tutti i chunk embeddati e li inserisco nel database
+    for (const chunk of embeddedChunks) {
+
+        await pool.query(
+
+            `INSERT INTO chunks (source, text, embedding) VALUES ($1, $2, $3)`,
+            [req.file.originalname, chunk.text, JSON.stringify(chunk.embedding)]
+
+        );
+
+    }
+
+    //Rimuovo i file dalla cartella uploads
+    fs.unlinkSync(filePath);
 
     console.log("Chunks:", chunks);
     console.log("Numero chunk:", chunks.length);

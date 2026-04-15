@@ -1,17 +1,19 @@
 services:
   pgvector:
     image: pgvector/pgvector:pg17
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: raguser
-      POSTGRES_PASSWORD: ragpass
-      POSTGRES_DB: ragdb
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./dbdocker/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U raguser -d ragdb" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -20,31 +22,44 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    env_file:
+      - .env
     ports:
       - "3000:3000"
     volumes:
-      - ./backend:/app # hot reload — le modifiche si riflettono subito
-      - /app/node_modules # evita che il volume sovrascriva i node_modules
+      - ./backend:/app # Hot reload — le modifiche si riflettono subito
+      - /app/node_modules # Evita che il volume sovrascriva i node_modules
     depends_on:
       pgvector:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://raguser:ragpass@pgvector:5432/ragdb
+      DATABASE_URL: ${DATABASE_URL}
       NODE_ENV: development
+      OLLAMA_URL: http://ollama:11434
 
   frontend:
+    env_file:
+      - .env
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend:/app # hot reload
+      - ./frontend:/app # Hot reload
       - /app/node_modules
     depends_on:
       - backend
     environment:
       NODE_ENV: development
 
+  ollama:
+    image: ollama/ollama # Utilizzo l'immagine specifica di ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
 volumes:
   pgdata:
+  ollama_data:
