@@ -29,7 +29,10 @@ export async function getEmbedding(text: string): Promise<number[]> {
     */
 
     //Utilizzo Ollama per creare un embedding dato una stringa
-    const res = await fetch("http://ollama:11434/api/embedding", {
+
+    console.log(text);
+
+    const res = await fetch("http://ollama:11434/api/embeddings", {
 
         method: "POST",
         headers: { "Content-Type": "application/json" },

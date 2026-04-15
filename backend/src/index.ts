@@ -2,6 +2,8 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import uploadRoute from "./routes/upload.js";
+import chatRoute from "./routes/chat.js";
+
 
 //Creo la mia applicazione Express
 const app = express();
@@ -21,6 +23,8 @@ app.get("/test", (req, res) => { //"req" = tutto quello che il client manda; "re
 
 //Quando il server riceve richieste all'endpoint "upload", richiamo la route "uploadRoute"
 app.use("/upload", uploadRoute);
+
+app.use("/chat", chatRoute);
 
 //Questo avvia il server su porta 3000
 app.listen(3000, () => {

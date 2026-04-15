@@ -2,6 +2,7 @@ import { useState } from 'react' //Prendo le funzionalità di React
 import './App.css'
 import { testBackend } from "./services/api";
 import FileUpload from "./components/FileUpload";
+import ChatBot from './components/ChatBot';
 
 
 function App() {
@@ -29,6 +30,8 @@ function App() {
       <p>{message}</p>
 
       <FileUpload />
+
+      <ChatBot />
 
     </div>
 
