@@ -1,0 +1,117 @@
+#chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: min(100%, 720px);
+    margin: 0 auto;
+    min-height: 420px;
+    padding: 20px;
+    border-radius: 20px;
+    background: #f5f1e8;
+    border: 1px solid #d8cfbf;
+    box-shadow: 0 18px 40px rgba(70, 55, 27, 0.08);
+}
+
+#chat-messages {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.message-row {
+    display: flex;
+}
+
+.message-row-user {
+    justify-content: flex-end;
+}
+
+.message-row-bot {
+    justify-content: flex-start;
+}
+
+.message-bubble {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 18px;
+}
+
+.message-bubble p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.message-label {
+    display: inline-block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.message-user {
+    background: #1f5eff;
+    color: #ffffff;
+    border-bottom-right-radius: 6px;
+}
+
+.message-bot {
+    background: #ffffff;
+    color: #2d2419;
+    border: 1px solid #e2dacb;
+    border-bottom-left-radius: 6px;
+}
+
+#chat-input {
+    display: flex;
+    gap: 12px;
+}
+
+#chat-input input {
+    flex: 1;
+    border: 1px solid #cfc4b0;
+    border-radius: 999px;
+    padding: 14px 18px;
+    font-size: 16px;
+    background: #fffdf8;
+}
+
+#chat-input input:focus {
+    outline: 2px solid #1f5eff;
+    outline-offset: 2px;
+}
+
+#chat-input button {
+    border: none;
+    border-radius: 999px;
+    padding: 0 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(135deg, #1f5eff, #4a7dff);
+    cursor: pointer;
+}
+
+@media (max-width: 640px) {
+    #chat-container {
+        min-height: 360px;
+        padding: 16px;
+    }
+
+    .message-bubble {
+        max-width: 88%;
+    }
+
+    #chat-input {
+        flex-direction: column;
+    }
+
+    #chat-input button {
+        padding: 14px 18px;
+    }
+}
